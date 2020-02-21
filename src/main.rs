@@ -25,7 +25,7 @@ unsafe fn string_to_chars (s: &str) -> *mut libc::c_char {
 
 unsafe extern "C" fn on_destroy (p : glib_sys::gpointer) {
     let c = CStr::from_ptr(p as *mut libc::c_char);
-    println!("GraphState::reset [pipeline] element {} was destroyed", c.to_str().unwrap());
+    println!("Element {} was destroyed", c.to_str().unwrap());
 }
 
 impl Context {
@@ -62,11 +62,20 @@ impl Context {
                                                 Some(on_destroy));
         }
         pipeline.set_state(gst::State::Playing).unwrap();
+        println!("Pipeline refcounter {}", pipeline.ref_count());
+        // Refcounter equals two here
         Context { pipeline }
     }
 
     fn reset (&mut self) {
         self.pipeline.set_state(gst::State::Null).unwrap();
+
+        // unsafe { // Still equals two for some reason
+        //    let p : *mut gst_sys::GstPipeline = self.pipeline.to_glib_full();
+        //    gstreamer_sys::gst_object_unref(p as *mut gst_sys::GstObject);
+        //    gstreamer_sys::gst_object_unref(p as *mut gst_sys::GstObject);
+        //}
+        println!("Done");
         self.pipeline = gst::Pipeline::new (None);
     }
 
@@ -77,9 +86,9 @@ fn main () {
     let mainloop = glib::MainLoop::new (None, false);
 
     let context = Arc::new(Mutex::new(Context::new()));
-    glib::timeout_add_seconds(5, move || {
+    glib::timeout_add_seconds(3, move || {
         context.lock().unwrap().reset();
-        glib::Continue(true)
+        glib::Continue(false)
     });
     
     mainloop.run ();
