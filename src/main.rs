@@ -39,7 +39,7 @@ impl Context {
         let stor_name = CString::new("destroy").unwrap();
         unsafe {
             let name = string_to_chars(&videosrc.get_name().as_str());
-            let c : *mut gst_sys::GstElement = videosrc.to_glib_full();
+            let c : *mut gst_sys::GstElement = videosrc.to_glib_none().0;
             gobject_sys::g_object_set_data_full(c as *mut gobject_sys::GObject,
                                                 stor_name.as_ptr() as *const libc::c_char,
                                                 name as glib_sys::gpointer,
@@ -47,7 +47,7 @@ impl Context {
         }
         unsafe {
             let name = string_to_chars(&videosink.get_name().as_str());
-            let c : *mut gst_sys::GstElement = videosink.to_glib_full();
+            let c : *mut gst_sys::GstElement = videosink.to_glib_none().0;
             gobject_sys::g_object_set_data_full(c as *mut gobject_sys::GObject,
                                                 stor_name.as_ptr() as *const libc::c_char,
                                                 name as glib_sys::gpointer,
@@ -55,7 +55,7 @@ impl Context {
         }
         unsafe {
             let name = string_to_chars(&pipeline.get_name().as_str());
-            let c : *mut gst_sys::GstPipeline = pipeline.to_glib_full();
+            let c : *mut gst_sys::GstPipeline = pipeline.to_glib_none().0;
             gobject_sys::g_object_set_data_full(c as *mut gobject_sys::GObject,
                                                 stor_name.as_ptr() as *const libc::c_char,
                                                 name as glib_sys::gpointer,
