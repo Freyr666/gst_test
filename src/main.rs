@@ -69,13 +69,12 @@ impl Context {
 
     fn reset (&mut self) {
         self.pipeline.set_state(gst::State::Null).unwrap();
-
-        // unsafe { // Still equals two for some reason
+        println!("Pipeline refcounter on reset {}", self.pipeline.ref_count());
+        // unsafe { // Refcounter equals two for some reason
         //    let p : *mut gst_sys::GstPipeline = self.pipeline.to_glib_full();
         //    gstreamer_sys::gst_object_unref(p as *mut gst_sys::GstObject);
         //    gstreamer_sys::gst_object_unref(p as *mut gst_sys::GstObject);
         //}
-        println!("Done");
         self.pipeline = gst::Pipeline::new (None);
     }
 
